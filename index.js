@@ -101,7 +101,7 @@ const reverseArrayInPlace = (array) => {
 
 // console.log(reverseArrayInPlace(myArr));
 
-//A List
+/* A List */
 
 let array1 = [1, 2, 3];
 
@@ -165,7 +165,7 @@ function nth(list, number) {
 // console.log(nth(arrayToList([10, 20, 30]), 5));
 // → 20
 
-// Deep Comparison
+/* Deep Comparison */
 
 let obj = {here: {is: "an"}, object: 2};
 
@@ -198,23 +198,6 @@ const deepEqual = (obj1, obj2) => {
 // console.log(deepEqual(obj, obj));
 // console.log(deepEqual(obj, {here: 1, object: 2}));
 // console.log(deepEqual(obj, {here: {is: "an"}, object: 2}));
-
-function countBy(items, groupName) {
-  let counts = [];
-  for(let item of items) {
-    let name = groupName(item);
-    let known = counts.findIndex(c => c.name == name);
-    if(known == -1) {
-      counts.push({name, count: 1});
-    }
-    else {
-      counts[known].count++;
-    }
-  }
-  return counts;
-}
-
-//console.log(countBy([1,2,3,4,5], n => n > 2));
 
 
 /* Chapter 5: Exercises */
@@ -339,3 +322,112 @@ function dominantDirection(text) {
 // → ltr
 //console.log(dominantDirection("Hey, مساء الخير"));
 // → rtl
+
+/* Chapter 6 */
+
+// A Vector Type
+
+class Vec {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  plus(vector2) {
+    return new Vec(this.x + vector2.x, this.y + vector2.y);
+  }
+
+  minus(vector2) {
+    return new Vec(this.x - vector2.x, this.y - vector2.y);
+  }
+
+  get length() {
+    return Math.sqrt((0 - this.x) ** 2 + (0 - this.y) ** 2);
+  }
+}
+
+let myVector = new Vec(3, 4);
+
+//console.log(myVector);
+
+//myVector.length; //5
+// console.log(new Vec(1,2).plus(new Vec(2, 3)));
+// console.log(new Vec(1,2).minus(new Vec(2, 3)));
+
+// Groups
+
+class Group {
+  constructor(){
+    this.group = [];
+  }
+
+  add(value) {
+    if(!this.has(value)) this.group.push(value);
+  }
+
+  delete(value) {
+    if(this.has(value)) this.group = this.group.filter(element => element !== value);
+  }
+
+  has(value) {
+    for (let v of this.group) {
+      if(v === value) return true;
+    }
+    return false
+  }
+
+  static from(collection) {
+    let group = new Group;
+    for (let value of collection) {
+      group.add(value);
+    }
+    return group;
+  }
+
+  [Symbol.iterator]() {
+    return new GroupIterator(this);
+  }
+}
+
+// Iterable Groups
+
+class GroupIterator {
+  constructor(group) {
+    this.group = group;
+    this.position = 0;
+  }
+
+  next() {
+    if (this.position >= this.group.group.length) {
+      return {done: true};
+    } else {
+      let element = {value: this.group.group[this.position], done: false};
+      this.position++;
+      return element;
+    }
+  }
+}
+
+let group = Group.from([10 ,20 ,30]);
+
+// console.log(group.delete(20));
+//console.log(group);
+
+// for(let value of group) {
+//   console.log(value);
+// }
+
+// Borrowing a Method
+
+let map = {one: true, two: true, hasOwnProperty: true};
+
+//console.log(map.hasOwnProperty("one"))
+// This will give you a TypeError: map.hasOwnProperty is not a function
+
+//console.log(Object.prototype.hasOwnProperty.call(map, "hasOwnProperty"));
+// → true
+
+/*
+Why this fix? call will take this a a first argument and will treat the rest of the elements as normal arguments.
+In order words, call function will threat hasOwnProperty as map of the elements of map.
+*/
